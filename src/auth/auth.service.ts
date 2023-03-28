@@ -11,11 +11,17 @@ export class AuthService {
               private jwtService: JwtService) {
   }
 
+  async login(userDto: CreateUserDto) {
+    const user = await this.validateUser(userDto);
+
+    return this.generateToken(user);
+  }
+
   async registration(userDto: CreateUserDto) {
     const candidate = await this.userService.getUserByEmail(userDto.email);
 
     if (candidate) {
-      throw new HttpException("Пользователь с таким email уже существует", HttpStatus.BAD_REQUEST);
+      throw new HttpException("Пользователь с таким email существует", HttpStatus.BAD_REQUEST);
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5);
@@ -30,5 +36,16 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload)
     };
+  }
+
+  private async validateUser(userDto: CreateUserDto) {
+    const user = await this.userService.getUserByEmail(userDto.email);
+    const passwordEquals = await bcrypt.compare(userDto.password, user.password);
+
+    if (user && passwordEquals) {
+      return user;
+    }
+
+    throw new UnauthorizedException({ message: "Некорректный емайл или пароль" });
   }
 }
