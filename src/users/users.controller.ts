@@ -5,8 +5,8 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { User } from "./users.model";
 import { Roles } from "../auth/roles-auth.decorator";
 import { RolesGuard } from "../auth/roles.guard";
-import { BanUserDto } from "./dto/ban-user.dto";
 import { AddRoleDto } from "./dto/add-role.dto";
+import { BanUserDto } from "./dto/ban-user.dto";
 
 @ApiTags("Пользователи ОПИСАНИЕ")
 @Controller("users")
